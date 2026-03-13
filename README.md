@@ -1,59 +1,209 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# LokyHelpMe
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Interactive Artisan assistant for Laravel beginners.
 
-## About Laravel
+`lokyhelpme` helps users generate Laravel classes and migrations through guided CLI questions, so they do not need to remember Artisan syntax.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Install
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+composer require lokyfordev/lokyhelpme
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Run:
 
-## Learning Laravel
+```bash
+php artisan lokyhelpme
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Main Command
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+php artisan lokyhelpme
+```
 
-## Laravel Sponsors
+Startup output:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```text
+----------------------------------
+LokyHelpMe Laravel Assistant
+Interactive Laravel command generator
+----------------------------------
+```
 
-### Premium Partners
+## Menu
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. Model
+2. Controller
+3. Migration
+4. Seeder
+5. Factory
+6. Policy
+7. Middleware
+8. Request Validation
+9. Event
+10. Listener
+11. Job
+12. Command
+13. Resource
+14. Pivot Model
+15. API Controller
 
-## Contributing
+## What Gets Generated
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Option | Artisan command |
+|---|---|
+| Model | `make:model` (`-m`, `-f`, `-s`, `-c` optional) |
+| Controller | `make:controller` (`Normal`, `--resource`, `--api`) |
+| Migration | `make:migration` or `make:model -m` (guided) |
+| Seeder | `make:seeder` |
+| Factory | `make:factory --model=Model` |
+| Policy | `make:policy --model=Model` |
+| Middleware | `make:middleware` |
+| Request Validation | `make:request` |
+| Event | `make:event` |
+| Listener | `make:listener` (optional `--event`) |
+| Job | `make:job` |
+| Command | `make:command` |
+| Resource | `make:resource` |
+| Pivot Model | `make:model --pivot` |
+| API Controller | `make:controller --api` |
 
-## Code of Conduct
+## Migration Assistant
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+When selecting `Migration`, users get:
 
-## Security Vulnerabilities
+1. Create new table
+2. Create model with migration
+3. Modify existing table
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Column Builder
+
+For all migration flows, LokyHelpMe can ask for columns interactively.
+
+- Type `end` to finish adding columns
+- Supported types:
+  - `string`, `text`, `integer`, `bigInteger`, `boolean`
+  - `decimal`, `float`, `date`, `dateTime`, `timestamp`
+  - `enum`, `json`, `uuid`
+- Supports options:
+  - nullable
+  - unique
+  - default value
+  - string length
+  - decimal/float precision + scale
+
+Enum values are entered once using commas or spaces:
+
+```text
+admin superadmin helper
+```
+
+Generated:
+
+```php
+$table->enum('role', ['admin', 'superadmin', 'helper']);
+```
+
+## Validation And UX
+
+- Empty input is rejected
+- Class names are validated against PHP naming conventions
+- Table/column names are validated for migration-safe format
+- Lowercase/dirty class input is normalized:
+  - `seler` -> `Seler`
+  - `user_profile` -> `UserProfile`
+- Every command is previewed before execution
+- User must confirm execution
+
+## Database Table Detection
+
+For `Modify existing table`, LokyHelpMe fetches tables from the active Laravel DB connection and lists them for selection.
+
+If DB connection fails:
+
+```text
+Database connection failed.
+Check your .env configuration.
+```
+
+If no tables are found:
+
+```text
+No tables found in the current database.
+```
+
+## Logging
+
+LokyHelpMe logs generation actions to:
+
+```text
+storage/logs/lokyhelpme.log
+```
+
+Examples:
+
+- `User generated model: Post`
+- `User modified table: users`
+- `User created event: UserRegistered`
+
+## Package Structure
+
+```text
+lokyhelpme/
+├── src/
+│   ├── Console/
+│   │   └── LokyHelpMeCommand.php
+│   ├── Services/
+│   │   ├── ModelGenerator.php
+│   │   ├── ControllerGenerator.php
+│   │   ├── MigrationGenerator.php
+│   │   ├── EventGenerator.php
+│   │   ├── ListenerGenerator.php
+│   │   ├── JobGenerator.php
+│   │   ├── CommandGenerator.php
+│   │   ├── ResourceGenerator.php
+│   │   ├── PivotModelGenerator.php
+│   │   ├── TableInspector.php
+│   │   ├── InputValidator.php
+│   │   └── CommandPreview.php
+│   └── LokyHelpMeServiceProvider.php
+└── composer.json
+```
+
+## Compatibility
+
+- PHP `^8.1`
+- Laravel `10`, `11`, `12` (via Illuminate components)
+
+## Auto-discovery
+
+`composer.json` includes:
+
+```json
+"extra": {
+  "laravel": {
+    "providers": [
+      "LokyHelpMe\\LokyHelpMeServiceProvider"
+    ]
+  }
+}
+```
+
+## Development
+
+Run tests:
+
+```bash
+php artisan test
+```
+
+Run formatter:
+
+```bash
+vendor/bin/pint
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
