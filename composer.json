@@ -1,5 +1,5 @@
 {
-    "name": "lokyhelpme/lokyhelpme",
+    "name": "lokyfordev/lokyhelpme",
     "description": "Interactive Laravel Artisan assistant for beginners",
     "type": "library",
     "version": "1.0.0",
